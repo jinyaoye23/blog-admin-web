@@ -3,22 +3,22 @@ import type { Comment, CommentRequest, CommentQueryParams, ApiResponse } from '@
 
 export const commentAPI = {
   // 获取文章评论
-  getByArticle: (articleId: number, params?: CommentQueryParams) => {
-    return request.get<any, ApiResponse<Comment[]>>(`/comments/article/${articleId}`, { params })
+  getByArticle: (articleId: number, params?: CommentQueryParams): Promise<ApiResponse<Comment[]>> => {
+    return request.get(`/comments/article/${articleId}`, { params })
   },
 
   // 创建评论
-  create: (articleId: number, data: CommentRequest) => {
-    return request.post<any, ApiResponse<Comment>>(`/comments/article/${articleId}`, data)
+  create: (articleId: number, data: CommentRequest): Promise<ApiResponse<Comment>> => {
+    return request.post(`/comments/article/${articleId}`, data)
   },
 
   // 删除评论
-  delete: (id: number) => {
-    return request.delete<any, ApiResponse<void>>(`/comments/${id}`)
+  delete: (id: number): Promise<ApiResponse<void>> => {
+    return request.delete(`/comments/${id}`)
   },
 
   // 获取我的评论
-  getMyComments: (params?: CommentQueryParams) => {
-    return request.get<any, ApiResponse<Comment[]>>('/comments/my', { params })
+  getMyComments: (params?: CommentQueryParams): Promise<ApiResponse<Comment[]>> => {
+    return request.get('/comments/my', { params })
   },
 }

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { articleAPI } from '@/api/articles'
-import type { Article, ArticleRequest, ArticleQueryParams } from '@/types'
+import type { Article, ArticleRequest, ArticleQueryParams, ApiResponse } from '@/types'
 
 export const useArticleStore = defineStore('article', () => {
   const articles = ref<Article[]>([])
@@ -18,12 +18,12 @@ export const useArticleStore = defineStore('article', () => {
   const fetchArticles = async (params?: ArticleQueryParams) => {
     loading.value = true
     try {
-      const response = await articleAPI.getList(params)
-      if (response.data.data) {
-        articles.value = response.data.data
+      const response: ApiResponse<Article[]> = await articleAPI.getList(params)
+      if (response.data) {
+        articles.value = response.data
       }
-      if (response.data.pagination) {
-        pagination.value = response.data.pagination
+      if (response.pagination) {
+        pagination.value = response.pagination
       }
       return response
     } finally {
@@ -35,9 +35,9 @@ export const useArticleStore = defineStore('article', () => {
   const fetchArticleById = async (id: number) => {
     loading.value = true
     try {
-      const response = await articleAPI.getById(id)
-      if (response.data.data) {
-        currentArticle.value = response.data.data
+      const response: ApiResponse<Article> = await articleAPI.getById(id)
+      if (response.data) {
+        currentArticle.value = response.data
       }
       return response
     } finally {
@@ -47,23 +47,23 @@ export const useArticleStore = defineStore('article', () => {
 
   // 创建文章
   const createArticle = async (data: ArticleRequest) => {
-    const response = await articleAPI.create(data)
-    if (response.data.data) {
-      articles.value.unshift(response.data.data)
+    const response: ApiResponse<Article> = await articleAPI.create(data)
+    if (response.data) {
+      articles.value.unshift(response.data)
     }
     return response
   }
 
   // 更新文章
   const updateArticle = async (id: number, data: ArticleRequest) => {
-    const response = await articleAPI.update(id, data)
-    if (response.data.data) {
+    const response: ApiResponse<Article> = await articleAPI.update(id, data)
+    if (response.data) {
       const index = articles.value.findIndex(a => a.id === id)
       if (index !== -1) {
-        articles.value[index] = response.data.data
+        articles.value[index] = response.data
       }
       if (currentArticle.value?.id === id) {
-        currentArticle.value = response.data.data
+        currentArticle.value = response.data
       }
     }
     return response
@@ -83,12 +83,12 @@ export const useArticleStore = defineStore('article', () => {
   const fetchMyArticles = async (params?: ArticleQueryParams) => {
     loading.value = true
     try {
-      const response = await articleAPI.getMyArticles(params)
-      if (response.data.data) {
-        articles.value = response.data.data
+      const response: ApiResponse<Article[]> = await articleAPI.getMyArticles(params)
+      if (response.data) {
+        articles.value = response.data
       }
-      if (response.data.pagination) {
-        pagination.value = response.data.pagination
+      if (response.pagination) {
+        pagination.value = response.pagination
       }
       return response
     } finally {

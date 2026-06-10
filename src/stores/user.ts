@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { authAPI } from '@/api/auth'
-import type { User, LoginRequest, RegisterRequest } from '@/types'
+import type { User, LoginRequest, RegisterRequest, ApiResponse, AuthResponse } from '@/types'
 import { setToken, setUser, removeToken, removeUser, getUser, getToken } from '@/utils/auth'
 
 export const useUserStore = defineStore('user', () => {
@@ -13,9 +13,9 @@ export const useUserStore = defineStore('user', () => {
 
   // 登录
   const login = async (data: LoginRequest) => {
-    const response = await authAPI.login(data)
-    if (response.data.data) {
-      const { user: userData, token: tokenData } = response.data.data
+    const response: ApiResponse<AuthResponse> = await authAPI.login(data)
+    if (response.data) {
+      const { user: userData, token: tokenData } = response.data
       user.value = userData
       token.value = tokenData
       setToken(tokenData)
@@ -26,9 +26,9 @@ export const useUserStore = defineStore('user', () => {
 
   // 注册
   const register = async (data: RegisterRequest) => {
-    const response = await authAPI.register(data)
-    if (response.data.data) {
-      const { user: userData, token: tokenData } = response.data.data
+    const response: ApiResponse<AuthResponse> = await authAPI.register(data)
+    if (response.data) {
+      const { user: userData, token: tokenData } = response.data
       user.value = userData
       token.value = tokenData
       setToken(tokenData)
@@ -39,10 +39,10 @@ export const useUserStore = defineStore('user', () => {
 
   // 获取当前用户信息
   const fetchUserInfo = async () => {
-    const response = await authAPI.getCurrentUser()
-    if (response.data.data) {
-      user.value = response.data.data
-      setUser(response.data.data)
+    const response: ApiResponse<User> = await authAPI.getCurrentUser()
+    if (response.data) {
+      user.value = response.data
+      setUser(response.data)
     }
     return response
   }

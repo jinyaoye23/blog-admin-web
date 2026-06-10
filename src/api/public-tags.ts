@@ -6,17 +6,18 @@ import type { Tag, ApiResponse } from '@/types'
  */
 export const publicTagAPI = {
   // 获取所有标签列表
-  getList: () => {
-    return request.get<any, ApiResponse<Tag[]>>('/public/tags')
+  getList: (): Promise<ApiResponse<Tag[]>> => {
+    return request.get('/public/tags')
   },
 
   // 获取标签详情（通过ID）
-  getById: (id: number) => {
-    return request.get<any, ApiResponse<Tag>>(`/public/tags/${id}`)
+  getById: (id: number): Promise<ApiResponse<Tag>> => {
+    return request.get(`/public/tags/${id}`)
   },
 
   // 获取标签详情（通过slug）
-  getBySlug: (slug: string) => {
-    return request.get<any, ApiResponse<Tag>>(`/public/tags/slug/${slug}`)
+  getBySlug: (slug: string): Promise<ApiResponse<Tag>> => {
+    return request.get(`/public/tags/slug/${slug}`)
   },
 }
+

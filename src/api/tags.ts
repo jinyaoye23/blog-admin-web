@@ -3,27 +3,27 @@ import type { Tag, TagRequest, ApiResponse } from '@/types'
 
 export const tagAPI = {
   // 获取标签列表
-  getList: () => {
-    return request.get<any, ApiResponse<Tag[]>>('/tags')
+  getList: (): Promise<ApiResponse<Tag[]>> => {
+    return request.get('/tags')
   },
 
   // 获取标签详情
-  getById: (id: number) => {
-    return request.get<any, ApiResponse<Tag>>(`/tags/${id}`)
+  getById: (id: number): Promise<ApiResponse<Tag>> => {
+    return request.get(`/tags/${id}`)
   },
 
   // 创建标签
-  create: (data: TagRequest) => {
-    return request.post<any, ApiResponse<Tag>>('/tags', data)
+  create: (data: TagRequest): Promise<ApiResponse<Tag>> => {
+    return request.post('/tags', data)
   },
 
   // 更新标签
-  update: (id: number, data: TagRequest) => {
-    return request.put<any, ApiResponse<Tag>>(`/tags/${id}`, data)
+  update: (id: number, data: TagRequest): Promise<ApiResponse<Tag>> => {
+    return request.put(`/tags/${id}`, data)
   },
 
   // 删除标签
-  delete: (id: number) => {
-    return request.delete<any, ApiResponse<void>>(`/tags/${id}`)
+  delete: (id: number): Promise<ApiResponse<void>> => {
+    return request.delete(`/tags/${id}`)
   },
 }

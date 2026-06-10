@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
+import type { AxiosInstance, AxiosResponse, AxiosError } from 'axios'
 import { ElMessage } from 'element-plus'
 import type { ApiResponse } from '@/types'
 
@@ -25,15 +25,16 @@ request.interceptors.request.use(
   }
 )
 
-// 响应拦截器
+// 响应拦截器 - 直接返回 ApiResponse，而不是 AxiosResponse
 request.interceptors.response.use(
   (response: AxiosResponse<ApiResponse>) => {
-    const { data } = response
-    if (data.success) {
-      return response
+    const apiResponse = response.data
+    if (apiResponse.success) {
+      // 直接返回 ApiResponse 对象（使用类型断言绕过 Axios 的类型检查）
+      return apiResponse as any
     } else {
-      ElMessage.error(data.message || '请求失败')
-      return Promise.reject(new Error(data.message))
+      ElMessage.error(apiResponse.message || '请求失败')
+      return Promise.reject(new Error(apiResponse.message))
     }
   },
   (error: AxiosError<ApiResponse>) => {

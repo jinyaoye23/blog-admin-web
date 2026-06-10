@@ -3,17 +3,17 @@ import type { LoginRequest, RegisterRequest, AuthResponse, User, ApiResponse } f
 
 export const authAPI = {
   // 用户注册
-  register: (data: RegisterRequest) => {
-    return request.post<any, ApiResponse<AuthResponse>>('/auth/register', data)
+  register: (data: RegisterRequest): Promise<ApiResponse<AuthResponse>> => {
+    return request.post('/auth/register', data)
   },
 
   // 用户登录
-  login: (data: LoginRequest) => {
-    return request.post<any, ApiResponse<AuthResponse>>('/auth/login', data)
+  login: (data: LoginRequest): Promise<ApiResponse<AuthResponse>> => {
+    return request.post('/auth/login', data)
   },
 
   // 获取当前用户信息
-  getCurrentUser: () => {
-    return request.get<any, ApiResponse<User>>('/auth/me')
+  getCurrentUser: (): Promise<ApiResponse<User>> => {
+    return request.get('/auth/me')
   },
 }

@@ -6,14 +6,15 @@ import type { Comment, CommentQueryParams, ApiResponse } from '@/types'
  */
 export const publicCommentAPI = {
   // 获取文章评论（仅显示已审核的评论）
-  getByArticle: (articleId: number, params?: CommentQueryParams) => {
-    return request.get<any, ApiResponse<Comment[]>>(`/public/comments/article/${articleId}`, { params })
+  getByArticle: (articleId: number, params?: CommentQueryParams): Promise<ApiResponse<Comment[]>> => {
+    return request.get(`/public/comments/article/${articleId}`, { params })
   },
 
   // 获取最新评论
-  getLatest: (limit: number = 10) => {
-    return request.get<any, ApiResponse<Comment[]>>('/public/comments/latest', {
+  getLatest: (limit: number = 10): Promise<ApiResponse<Comment[]>> => {
+    return request.get('/public/comments/latest', {
       params: { limit }
     })
   },
 }
+

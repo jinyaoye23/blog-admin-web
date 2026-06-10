@@ -130,9 +130,9 @@ const rules = {
 
 const handleCoverUpload = async (file: File) => {
   try {
-    const res: any = await uploadAPI.uploadSingle(file)
-    if (res.data?.data) {
-      articleForm.coverImage = res.data.data.url
+    const res = await uploadAPI.uploadSingle(file)
+    if (res.data?.url) {
+      articleForm.coverImage = res.data.url
       return false // 阻止默认上传行为
     }
   } catch (error) {
@@ -147,9 +147,9 @@ const handleImageUpload = async (files: File[], callback: any) => {
   
   for (const file of files) {
     try {
-      const res: any = await uploadAPI.uploadSingle(file)
-      if (res.data?.data) {
-        const imageUrl = getImageUrl(res.data.data.url)
+      const res = await uploadAPI.uploadSingle(file)
+      if (res.data?.url) {
+        const imageUrl = getImageUrl(res.data.url)
         urls.push(imageUrl)
       }
     } catch (error) {
@@ -203,7 +203,7 @@ const loadArticleDetail = async () => {
       excerpt: article.excerpt || '',
       coverImage: article.coverImage || '',
       categoryId: article.categoryId,
-      tagIds: article.tags?.map(t => t.id) || [],
+      tagIds: article.tags?.map(t => t.id) ?? [],
       status: article.status,
     })
   }

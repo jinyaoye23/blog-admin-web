@@ -3,27 +3,27 @@ import type { Category, CategoryRequest, ApiResponse } from '@/types'
 
 export const categoryAPI = {
   // 获取分类列表
-  getList: () => {
-    return request.get<any, ApiResponse<Category[]>>('/categories')
+  getList: (): Promise<ApiResponse<Category[]>> => {
+    return request.get('/categories')
   },
 
   // 获取分类详情
-  getById: (id: number) => {
-    return request.get<any, ApiResponse<Category>>(`/categories/${id}`)
+  getById: (id: number): Promise<ApiResponse<Category>> => {
+    return request.get(`/categories/${id}`)
   },
 
   // 创建分类
-  create: (data: CategoryRequest) => {
-    return request.post<any, ApiResponse<Category>>('/categories', data)
+  create: (data: CategoryRequest): Promise<ApiResponse<Category>> => {
+    return request.post('/categories', data)
   },
 
   // 更新分类
-  update: (id: number, data: CategoryRequest) => {
-    return request.put<any, ApiResponse<Category>>(`/categories/${id}`, data)
+  update: (id: number, data: CategoryRequest): Promise<ApiResponse<Category>> => {
+    return request.put(`/categories/${id}`, data)
   },
 
   // 删除分类
-  delete: (id: number) => {
-    return request.delete<any, ApiResponse<void>>(`/categories/${id}`)
+  delete: (id: number): Promise<ApiResponse<void>> => {
+    return request.delete(`/categories/${id}`)
   },
 }

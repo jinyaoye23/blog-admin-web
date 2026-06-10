@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Search } from '@element-plus/icons-vue'
@@ -168,7 +168,7 @@ const loadArticles = async () => {
   })
 }
 
-const handleView = (id: number) => {
+const handleView = (_id: number) => {
   // TODO: 跳转到文章详情页
   ElMessage.info('查看文章功能待实现')
 }

@@ -6,17 +6,18 @@ import type { Category, ApiResponse } from '@/types'
  */
 export const publicCategoryAPI = {
   // 获取所有分类列表
-  getList: () => {
-    return request.get<any, ApiResponse<Category[]>>('/public/categories')
+  getList: (): Promise<ApiResponse<Category[]>> => {
+    return request.get('/public/categories')
   },
 
   // 获取分类详情（通过ID）
-  getById: (id: number) => {
-    return request.get<any, ApiResponse<Category>>(`/public/categories/${id}`)
+  getById: (id: number): Promise<ApiResponse<Category>> => {
+    return request.get(`/public/categories/${id}`)
   },
 
   // 获取分类详情（通过slug）
-  getBySlug: (slug: string) => {
-    return request.get<any, ApiResponse<Category>>(`/public/categories/slug/${slug}`)
+  getBySlug: (slug: string): Promise<ApiResponse<Category>> => {
+    return request.get(`/public/categories/slug/${slug}`)
   },
 }
+

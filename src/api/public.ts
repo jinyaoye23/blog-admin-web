@@ -10,10 +10,16 @@ export { publicCategoryAPI } from './public-categories'
 export { publicTagAPI } from './public-tags'
 export { publicCommentAPI } from './public-comments'
 
-// 便捷导出
+// 便捷导出 - 使用正确的类型引用
+import { publicArticleAPI as _articleAPI } from './public-articles'
+import { publicCategoryAPI as _categoryAPI } from './public-categories'
+import { publicTagAPI as _tagAPI } from './public-tags'
+import { publicCommentAPI as _commentAPI } from './public-comments'
+
 export const publicAPI = {
-  articles: {} as typeof import('./public-articles').publicArticleAPI,
-  categories: {} as typeof import('./public-categories').publicCategoryAPI,
-  tags: {} as typeof import('./public-tags').publicTagAPI,
-  comments: {} as typeof import('./public-comments').publicCommentAPI,
+  articles: _articleAPI,
+  categories: _categoryAPI,
+  tags: _tagAPI,
+  comments: _commentAPI,
 }
+

@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import type { User, ApiResponse, PaginationInfo } from '@/types'
+import type { User, ApiResponse } from '@/types'
 
 export interface UserQueryParams {
   page?: number
@@ -9,22 +9,22 @@ export interface UserQueryParams {
 
 export const userAPI = {
   // 获取用户列表
-  getList: (params?: UserQueryParams) => {
-    return request.get<any, ApiResponse<User[]>>('/users', { params })
+  getList: (params?: UserQueryParams): Promise<ApiResponse<User[]>> => {
+    return request.get('/users', { params })
   },
 
   // 获取用户详情
-  getById: (id: number) => {
-    return request.get<any, ApiResponse<User>>(`/users/${id}`)
+  getById: (id: number): Promise<ApiResponse<User>> => {
+    return request.get(`/users/${id}`)
   },
 
   // 更新用户
-  update: (id: number, data: Partial<User>) => {
-    return request.put<any, ApiResponse<User>>(`/users/${id}`, data)
+  update: (id: number, data: Partial<User>): Promise<ApiResponse<User>> => {
+    return request.put(`/users/${id}`, data)
   },
 
   // 删除用户
-  delete: (id: number) => {
-    return request.delete<any, ApiResponse<void>>(`/users/${id}`)
+  delete: (id: number): Promise<ApiResponse<void>> => {
+    return request.delete(`/users/${id}`)
   },
 }

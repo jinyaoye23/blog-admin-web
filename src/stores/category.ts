@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { categoryAPI } from '@/api/categories'
-import type { Category, CategoryRequest } from '@/types'
+import type { Category, CategoryRequest, ApiResponse } from '@/types'
 
 export const useCategoryStore = defineStore('category', () => {
   const categories = ref<Category[]>([])
@@ -11,9 +11,9 @@ export const useCategoryStore = defineStore('category', () => {
   const fetchCategories = async () => {
     loading.value = true
     try {
-      const response = await categoryAPI.getList()
-      if (response.data.data) {
-        categories.value = response.data.data
+      const response: ApiResponse<Category[]> = await categoryAPI.getList()
+      if (response.data) {
+        categories.value = response.data
       }
       return response
     } finally {
@@ -23,20 +23,20 @@ export const useCategoryStore = defineStore('category', () => {
 
   // 创建分类
   const createCategory = async (data: CategoryRequest) => {
-    const response = await categoryAPI.create(data)
-    if (response.data.data) {
-      categories.value.push(response.data.data)
+    const response: ApiResponse<Category> = await categoryAPI.create(data)
+    if (response.data) {
+      categories.value.push(response.data)
     }
     return response
   }
 
   // 更新分类
   const updateCategory = async (id: number, data: CategoryRequest) => {
-    const response = await categoryAPI.update(id, data)
-    if (response.data.data) {
+    const response: ApiResponse<Category> = await categoryAPI.update(id, data)
+    if (response.data) {
       const index = categories.value.findIndex(c => c.id === id)
       if (index !== -1) {
-        categories.value[index] = response.data.data
+        categories.value[index] = response.data
       }
     }
     return response

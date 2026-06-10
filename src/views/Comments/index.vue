@@ -60,13 +60,10 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { commentAPI } from '@/api/comments'
-import type { Comment } from '@/types'
+import type { Comment, ApiResponse } from '@/types'
 import dayjs from 'dayjs'
-
-const router = useRouter()
 
 const loading = ref(false)
 const comments = ref<Comment[]>([])
@@ -84,15 +81,15 @@ const formatDate = (date: string) => {
 const loadComments = async () => {
   loading.value = true
   try {
-    const response = await commentAPI.getMyComments({
+    const response: ApiResponse<Comment[]> = await commentAPI.getMyComments({
       page: pagination.page,
       limit: pagination.limit,
     })
-    if (response.data.data) {
-      comments.value = response.data.data
+    if (response.data) {
+      comments.value = response.data
     }
-    if (response.data.pagination) {
-      total.value = response.data.pagination.total
+    if (response.pagination) {
+      total.value = response.pagination.total
     }
   } catch (error) {
     console.error('加载评论失败:', error)
@@ -112,7 +109,7 @@ const handleSizeChange = (size: number) => {
   loadComments()
 }
 
-const handleViewArticle = (articleId: number) => {
+const handleViewArticle = (_articleId: number) => {
   // TODO: 跳转到文章详情页
   ElMessage.info('查看文章功能待实现')
 }
