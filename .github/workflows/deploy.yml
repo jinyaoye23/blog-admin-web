@@ -1,0 +1,102 @@
+name: Deploy Frontend via Docker
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: my-blog-web
+      CONTAINER_NAME: my-blog
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build project
+      run: npm run build
+
+    - name: Build Docker image
+      run: |
+        docker build -t $IMAGE_NAME:${{ github.sha }} .
+
+    - name: Save Docker image
+      run: |
+        docker save $IMAGE_NAME:${{ github.sha }} -o image.tar
+        chmod 644 image.tar
+
+    - name: Prepare remote deploy directory
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.ALIYUN_HOST }}
+        username: ${{ secrets.ALIYUN_USERNAME }}
+        password: ${{ secrets.ALIYUN_PASSWORD }}
+        port: ${{ secrets.ALIYUN_PORT }}
+        script: |
+          mkdir -p /tmp/deploy-${{ github.sha }}
+
+    - name: Transfer Docker image
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.ALIYUN_HOST }}
+        username: ${{ secrets.ALIYUN_USERNAME }}
+        password: ${{ secrets.ALIYUN_PASSWORD }}
+        port: ${{ secrets.ALIYUN_PORT }}
+        source: "image.tar"
+        target: "/tmp/deploy-${{ github.sha }}"
+
+    - name: Load image and deploy container
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.ALIYUN_HOST }}
+        username: ${{ secrets.ALIYUN_USERNAME }}
+        password: ${{ secrets.ALIYUN_PASSWORD }}
+        port: ${{ secrets.ALIYUN_PORT }}
+        script: |
+          set -e
+          IMAGE_NAME=${{ env.IMAGE_NAME }}
+          CONTAINER_NAME=${{ env.CONTAINER_NAME }}
+          cd /tmp/deploy-${{ github.sha }}
+          sudo docker load -i image.tar
+          old_container=$(sudo docker ps -aq --filter "name=$CONTAINER_NAME")
+          if [ -n "$old_container" ]; then
+            sudo docker rm -f "$old_container"
+          fi
+          if ! sudo docker run -d --name "$CONTAINER_NAME" -p 80:80 --restart unless-stopped "$IMAGE_NAME:${{ github.sha }}"; then
+            echo "🚨 docker run failed"
+            echo "== container status =="
+            sudo docker ps -a --filter "name=$CONTAINER_NAME"
+            echo "== container logs =="
+            sudo docker logs "$CONTAINER_NAME" || true
+            exit 1
+          fi
+          echo "== finished docker run =="
+          sudo docker ps --filter "name=$CONTAINER_NAME"
+          rm -rf /tmp/deploy-${{ github.sha }}
+
+    - name: Verify deployment
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.ALIYUN_HOST }}
+        username: ${{ secrets.ALIYUN_USERNAME }}
+        password: ${{ secrets.ALIYUN_PASSWORD }}
+        port: ${{ secrets.ALIYUN_PORT }}
+        script: |
+          CONTAINER_NAME=${{ env.CONTAINER_NAME }}
+          if sudo docker ps --filter "name=$CONTAINER_NAME" --format '{{.Names}}' | grep -q "$CONTAINER_NAME"; then
+            echo "✅ Docker deployment successful!"
+          else
+            echo "❌ Docker deployment failed!"
+            exit 1
+          fi
