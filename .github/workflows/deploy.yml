@@ -43,17 +43,8 @@ jobs:
         username: ${{ secrets.ALIYUN_USERNAME }}
         password: ${{ secrets.ALIYUN_PASSWORD }}
         port: ${{ secrets.ALIYUN_PORT }}
-        timeout: 30s
-        script_stop: true
-        debug: true
         script: |
-          echo "=== Starting deployment preparation ==="
-          echo "Server: ${{ secrets.ALIYUN_HOST }}"
-          echo "User: ${{ secrets.ALIYUN_USERNAME }}"
           mkdir -p /tmp/deploy-${{ github.sha }}
-          echo "Directory created: /tmp/deploy-${{ github.sha }}"
-          ls -la /tmp/deploy-${{ github.sha }}
-          echo "=== Preparation completed ==="
 
     - name: Transfer Docker image
       uses: appleboy/scp-action@v0.1.7
