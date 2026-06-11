@@ -41,7 +41,7 @@ jobs:
       with:
         host: ${{ secrets.ALIYUN_HOST }}
         username: ${{ secrets.ALIYUN_USERNAME }}
-        password: ${{ secrets.ALIYUN_PASSWORD }}
+        key: ${{ secrets.ALIYUN_SSH_KEY }}
         port: ${{ secrets.ALIYUN_PORT }}
         script: |
           mkdir -p /tmp/deploy-${{ github.sha }}
@@ -51,7 +51,7 @@ jobs:
       with:
         host: ${{ secrets.ALIYUN_HOST }}
         username: ${{ secrets.ALIYUN_USERNAME }}
-        password: ${{ secrets.ALIYUN_PASSWORD }}
+        key: ${{ secrets.ALIYUN_SSH_KEY }}
         port: ${{ secrets.ALIYUN_PORT }}
         timeout: 60s
         debug: true
@@ -63,7 +63,7 @@ jobs:
       with:
         host: ${{ secrets.ALIYUN_HOST }}
         username: ${{ secrets.ALIYUN_USERNAME }}
-        password: ${{ secrets.ALIYUN_PASSWORD }}
+        key: ${{ secrets.ALIYUN_SSH_KEY }}
         port: ${{ secrets.ALIYUN_PORT }}
         timeout: 60s
         script_stop: true
@@ -115,8 +115,14 @@ jobs:
       with:
         host: ${{ secrets.ALIYUN_HOST }}
         username: ${{ secrets.ALIYUN_USERNAME }}
-        password: ${{ secrets.ALIYUN_PASSWORD }}
+        key: ${{ secrets.ALIYUN_SSH_KEY }}
         port: ${{ secrets.ALIYUN_PORT }}
         timeout: 30s
         debug: true
         script: |
+          echo "=== SSH connectivity check ==="
+          uname -a
+          echo "Checking application on port 80..."
+          if ! curl -sS --fail http://localhost:80/ >/dev/null; then
+            echo "Application check failed" && exit 1
+          fi
