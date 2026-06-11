@@ -82,15 +82,8 @@ jobs:
           sudo docker load -i image.tar
           echo "Image loaded successfully."
           
-          echo "Checking for existing container: $CONTAINER_NAME"
-          old_container=$(sudo docker ps -aq --filter "name=$CONTAINER_NAME")
-          if [ -n "$old_container" ]; then
-            echo "Removing existing container: $old_container"
-            sudo docker rm -f "$old_container"
-            echo "Existing container removed."
-          else
-            echo "No existing container found."
-          fi
+          echo "Removing any existing container named $CONTAINER_NAME"
+          sudo docker rm -f "$CONTAINER_NAME" || true
           
           echo "Starting new container..."
           if ! sudo docker run -d --name "$CONTAINER_NAME" -p 8090:8090 --restart unless-stopped "$IMAGE_NAME:${{ github.sha }}"; then
